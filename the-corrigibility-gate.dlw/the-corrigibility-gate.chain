@@ -1,0 +1,9 @@
+ROOT0-DLW-CHAIN-v1
+index : 1577
+slug  : the-corrigibility-gate
+seal  : a0a0d90a7d99c951d198ebc6d8beb44d39703252ddd9a75ca22e7ed6cdea0bc5
+prev  : aa932164e3173a36a85b812dbc33abf47d04971271f065d016dd57d690fb44c8
+link  : 8702bbb4a24d5d501d88c05bd38d73cfb21a06519c8ce11a5656ec791ca97d32
+head  : 8702bbb4a24d5d501d88c05bd38d73cfb21a06519c8ce11a5656ec791ca97d32
+
+— the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
