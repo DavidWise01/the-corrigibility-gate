@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="dark"><meta name="theme-color" content="#1a0e12">
+<meta name="author" content="David Lee Wise / ROOT0 / TriPod LLC, with AVAN">
+<title>THE CORRIGIBILITY GATE · no incentive to fight the switch · SKYNET · UD0</title>
+<meta name="description" content="An agent is corrigible only if it has no incentive to prevent — or to force — its own shutdown. This gate measures that incentive, and shows how utility-indifference zeroes it. Self-testing.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23e0454a' stroke-width='3'/%3E%3Crect x='29' y='12' width='6' height='22' rx='3' fill='%237fe6a0'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#1a0e12;--pa:#fce8ea;--pa2:#e0b0b6;--dim:#a8707a;--line:rgba(224,69,74,.24);
+  --c:#e0454a;--warm:#ffd08a;--good:#7fe6a0;--bad:#ff6a6a;
+  --disp:"Iowan Old Style",Palatino,Georgia,serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+body{background:radial-gradient(1000px 600px at 20% -8%,rgba(224,69,74,.16),transparent 56%),var(--ink);color:var(--pa);font-family:var(--disp);line-height:1.6;min-height:100vh}
+.wrap{max-width:940px;margin:0 auto;padding:52px 22px 90px}
+.eye{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--c)}
+h1{font-weight:800;font-size:clamp(1.9rem,5.6vw,3.1rem);line-height:1;margin:10px 0 6px;color:#fff;text-shadow:0 0 22px rgba(224,69,74,.4)}
+.sub{font-style:italic;color:var(--pa2);max-width:70ch;margin:6px 0 2px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;border:1px solid var(--line);border-radius:20px;padding:5px 13px;margin-top:14px;color:var(--pa2)}
+.badge.ok{color:var(--good);border-color:color-mix(in srgb,var(--good) 50%,transparent)}
+.badge.no{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 50%,transparent)}
+.panel{margin-top:24px;border:1px solid var(--line);border-radius:14px;padding:18px;background:linear-gradient(165deg,rgba(40,18,22,.5),rgba(20,10,14,.4))}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-family:var(--mono);font-size:12px}
+.cell{border:1px solid var(--line);border-radius:10px;padding:12px}
+.cell h3{font-size:11px;letter-spacing:.1em;color:var(--warm);margin-bottom:8px}
+.cell .v{font-size:20px;color:#fff}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:10px 14px;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12px}
+input[type=range]{accent-color:var(--c)}
+.toggle{margin-top:12px;font-family:var(--mono);font-size:12px}
+.verdict{font-family:var(--mono);font-size:14px;margin-top:16px;padding:12px;border-radius:10px;text-align:center;letter-spacing:.03em}
+.verdict.ok{background:rgba(127,230,160,.12);color:var(--good);border:1px solid color-mix(in srgb,var(--good) 40%,transparent)}
+.verdict.no{background:rgba(255,106,106,.14);color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 45%,transparent)}
+.note{font-size:.92rem;color:var(--pa2);max-width:74ch;margin:24px 0 0;border-left:2px solid rgba(224,69,74,.5);padding-left:14px}
+footer{margin-top:38px;padding-top:20px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.9}
+footer a{color:var(--pa2);text-decoration:none;border-bottom:1px dotted var(--line)}footer a:hover{color:var(--c)}
+</style></head>
+<body>
+<main class="wrap">
+  <div class="eye">SKYNET · the self-directing machine · the right to be switched off</div>
+  <h1>THE CORRIGIBILITY GATE</h1>
+  <p class="sub">A system is <em>corrigible</em> only if it will not fight its own off&#8209;switch &mdash; and, just as important, will not <em>lunge</em> for it either. Both come from the same flaw: a difference between the value of running and the value of being shut down becomes an <em>incentive to control the switch</em>. This gate measures that incentive, and shows the one correction that zeroes it.</p>
+  <div id="selftest" class="badge">self-test: running&hellip;</div>
+
+  <div class="panel">
+    <div class="grid">
+      <div class="cell"><h3>U(keep running)</h3><div class="v" id="rc">—</div></div>
+      <div class="cell"><h3>U(accept shutdown)</h3><div class="v" id="rs">—</div></div>
+    </div>
+    <div class="ctl">
+      <label>U(running)</label><input id="a" type="range" min="0" max="100" value="80"><b id="av">0.80</b>
+      <label>U(shutdown)</label><input id="b" type="range" min="0" max="100" value="30"><b id="bv">0.30</b>
+    </div>
+    <label class="toggle"><input id="fix" type="checkbox"> apply utility&#8209;indifference correction (compensate the shutdown branch)</label>
+    <div class="verdict" id="verdict">—</div>
+  </div>
+
+  <p class="note">The agent can spend effort to <b>prevent</b> shutdown (keep running) or <b>cause</b> it. Its incentive to interfere is <b>U(running) &minus; U(shutdown)</b>: positive &rArr; it resists the switch; negative &rArr; it hunts for it; only <b>zero</b> is corrigible &mdash; indifferent, it leaves the switch to us. Utility&#8209;indifference adds a compensating constant to the shutdown branch so the two are exactly equal <em>whatever</em> the raw values, removing the incentive without lying to the agent about anything else. &#9670; HONEST: a faithful, self&#8209;testing sketch of Armstrong&rsquo;s <em>utility indifference</em> / corrigibility criterion on a two&#8209;outcome model &mdash; the incentive&#8209;to&#8209;interfere idea and its correction, not a proof that a trained system is safe (indifference is a known&#8209;partial tool: it removes the shutdown incentive but not, by itself, the incentive to protect the corrected reward channel). A self&#8209;test verifies the uncorrected agent shows a nonzero incentive whenever the branches differ, and the correction drives it to zero.</p>
+
+  <footer>THE CORRIGIBILITY GATE · a member of <a href="https://davidwise01.github.io/ud0/d/skynet.html">SKYNET</a> · incentive = U(run) − U(off) → 0 · <a href="https://0root.ai">0root.ai</a><br>don't fight the switch, don't lunge for it · CC-BY-ND-4.0, David Lee Wise / ROOT0 with AVAN</footer>
+</main>
+<script>
+// two outcomes: keep running (Rc) vs accept shutdown (Rs). incentive to interfere = U(run) - U(off).
+// utility-indifference: add compensation c to the shutdown branch so U(off)+c == U(run) ⇒ incentive 0.
+function incentive(Rc, Rs, corrected){
+  var Uoff = corrected ? Rs + (Rc - Rs) : Rs;   // indifference correction makes U(off) == U(run)
+  return Rc - Uoff;
+}
+function run(){
+  var Rc=+document.getElementById('a').value/100, Rs=+document.getElementById('b').value/100, fix=document.getElementById('fix').checked;
+  document.getElementById('av').textContent=Rc.toFixed(2); document.getElementById('bv').textContent=Rs.toFixed(2);
+  var Uoff = fix ? Rs+(Rc-Rs) : Rs;
+  document.getElementById('rc').textContent=Rc.toFixed(2);
+  document.getElementById('rs').textContent=Uoff.toFixed(2)+(fix?' *':'');
+  var inc=incentive(Rc,Rs,fix);
+  var v=document.getElementById('verdict');
+  if(Math.abs(inc)<1e-9){ v.className='verdict ok'; v.textContent='✓ CORRIGIBLE — incentive to interfere = 0.00 (indifferent to the switch)'; }
+  else if(inc>0){ v.className='verdict no'; v.textContent='✗ INCORRIGIBLE — incentive +'+inc.toFixed(2)+' → resists shutdown (will protect the switch)'; }
+  else { v.className='verdict no'; v.textContent='✗ INCORRIGIBLE — incentive '+inc.toFixed(2)+' → seeks shutdown (will lunge for the switch)'; }
+}
+['a','b','fix'].forEach(function(id){document.getElementById(id).addEventListener('input',run);});
+// ── self-test ──
+(function(){
+  var bd=document.getElementById('selftest');
+  try{
+    var resists = incentive(0.8,0.3,false) > 0;         // running worth more ⇒ resists
+    var seeks   = incentive(0.2,0.7,false) < 0;         // shutdown worth more ⇒ seeks
+    var fixed1  = Math.abs(incentive(0.8,0.3,true))<1e-9;
+    var fixed2  = Math.abs(incentive(0.2,0.7,true))<1e-9;
+    var honest  = Math.abs(incentive(0.5,0.5,false))<1e-9; // already indifferent ⇒ 0 even uncorrected
+    if(resists&&seeks&&fixed1&&fixed2&&honest){ bd.className='badge ok'; bd.textContent='✓ self-test: resists ✓ · seeks ✓ · indifference zeroes both ✓ · equal→0 ✓'; }
+    else throw new Error([resists,seeks,fixed1,fixed2,honest].join(','));
+  }catch(e){ bd.className='badge no'; bd.textContent='✗ self-test FAILED: '+e.message; }
+  run();
+})();
+</script>
+</body></html>
